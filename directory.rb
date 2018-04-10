@@ -1,38 +1,55 @@
 def input_students
-  puts "Please enter the neames of the students"
-  puts "To finish, just hit return twice"
-  #create an empty array
+  months = ["january", "february", "march", "april", "may", "june", "july",
+            "august", "september", "october", "november", "december"]
+  puts "Please enter the names of the students"
+  puts "To finish, just hit return twice after name is requested"
   students = []
-  #gets the first name
-  name = gets.chomp
-  #while the name is not empty repeat this code
+  name = gets.strip
   while !name.empty? do
-    #add the student hash to the array
-    students << {name: name, cohort: :november}
-    puts "Now we have #{students.count} students"
-    #get another name from the user
-    name = gets.chomp
+    puts "Which cohort are they on?"
+    cohort = gets.strip.downcase.to_sym
+    while !months.any? { |month| cohort.to_s.include?(month) } do
+      puts "Please input the correct cohort or leave blank to automate"
+      cohort = gets.strip.downcase.to_sym
+      if cohort.empty?
+        cohort = :april
+      end
+    end
+    students << {name: name, cohort: cohort}
+    if students.count < 2
+      puts "Now we have #{students.count} student"
+    else
+      puts "Now we have #{students.count} students"
+    end
+    name = gets.strip
   end
   #return the array of students
   students
 end
 
 def print_header
-  puts "The students of Villians Academy"
-  puts "-------------"
+  puts "The students of Villians Academy".center(50)
+  puts "-------------".center(50)
 end
 
 def print(students)
-  students.each do |student|
-    puts "#{student[:name]} (#{student[:cohort]} cohort)"
+  count = 0
+  while count < students.count
+    if students[count][:name].downcase.start_with?("o") &&
+      students[count][:name].length < 12
+      puts "#{count + 1}. #{students[count][:name]}".center(25) +
+      "(#{students[count][:cohort]} cohort)".center(25)
+    end
+    count += 1
   end
 end
 
 def print_footer(students)
-  puts "Overall, we have #{students.count} great students"
+  puts "Overall, we have #{students.count} great students".center(50)
 end
 
 students = input_students
+exit if students.empty?
 #nothing happens until we call the methods
 print_header
 print(students)
