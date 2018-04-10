@@ -1,6 +1,6 @@
 def input_students
   months = ["january", "february", "march", "april", "may", "june", "july",
-            "august", "september", "october", "november", "december"]
+              "august", "september", "october", "november", "december"]
   puts "Please enter the names of the students"
   puts "To finish, just hit return twice after name is requested"
   students = []
@@ -11,7 +11,7 @@ def input_students
     while !months.any? { |month| cohort.to_s.include?(month) } do
       puts "Please input the correct cohort or leave blank to automate"
       cohort = gets.strip.downcase.to_sym
-      if cohort.empty?
+      if cohort.empty?()
         cohort = :april
       end
     end
@@ -37,8 +37,7 @@ def print(students)
   while count < students.count
     if students[count][:name].downcase.start_with?("o") &&
       students[count][:name].length < 12
-      puts "#{count + 1}. #{students[count][:name]}".center(25) +
-      "(#{students[count][:cohort]} cohort)".center(25)
+      puts "#{count + 1}. #{students[count][:name]} (#{students[count][:cohort]} cohort)".center(50)
     end
     count += 1
   end
