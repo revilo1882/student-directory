@@ -2,11 +2,12 @@
 
 def interactive_menu
   loop do
-  # 1. print the menu and ask the user what to do
   print_menu
-  # 2. read the input and save it into a variable
-    selection = gets.chomp
-  # 3. do what the user has asked
+    process(gets.chomp)
+  end
+end
+
+def process(selection)
   case selection
     when "1"
       @students = input_students
@@ -17,7 +18,6 @@ def interactive_menu
     else
       puts "I don't know what you mean, try again"
     end
-  end
 end
 
 def print_menu
@@ -28,7 +28,7 @@ end
 
 def show_students
   print_header
-  print
+  print_students_list
   print_footer
 end
 
@@ -64,7 +64,7 @@ def print_header
   puts "-------------".center(60)
 end
 
-def print
+def print_students_list
   months = {}
   @students.each do |student|
     name = "#{student[:name].capitalize} "
