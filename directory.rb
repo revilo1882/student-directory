@@ -3,14 +3,14 @@
 def interactive_menu
   loop do
   print_menu
-    process(gets.chomp)
+    process(STDIN.gets.chomp)
   end
 end
 
 def process(selection)
   case selection
     when "1"
-      @students = input_students
+      input_students
     when "2"
       show_students
     when "3"
@@ -43,13 +43,13 @@ def input_students
   puts "To finish, just hit return twice after name is requested"
   months = ["january", "february", "march", "april", "may", "june", "july",
     "august", "september", "october", "november", "december"]
-  name = gets.strip
+  name = STDIN.gets.strip
   while !name.empty? do
     puts "Which cohort are they on?"
-    cohort = gets.strip.downcase.to_sym
+    cohort = STDIN.gets.strip.downcase.to_sym
     while !months.any? { |month| cohort.to_s.include?(month) } do
       puts "Please input the correct cohort or leave blank to automate"
-      cohort = gets.strip.downcase.to_sym
+      cohort = STDIN.gets.strip.downcase.to_sym
       if cohort.empty?()
         cohort = :april
       end
@@ -60,7 +60,7 @@ def input_students
     else
       puts "Now we have #{@students.count} students"
     end
-    name = gets.strip
+    name = STDIN.gets.strip
   end
   @students
 end
@@ -98,7 +98,7 @@ def save_students
   file.close
 end
 
-def load_students
+def load_students(filename = "students.csv")
   file = File.open("students.csv","r")
   file.readlines.each do |line|
   name, cohort = line.chomp.split(",")
@@ -107,4 +107,17 @@ def load_students
   file.close
 end
 
+def try_load_students
+  filename = ARGV.first
+  return if filename.nil?
+  if File.exists?(filename)
+    load_students(filename)
+    puts "Loaded #{@students.count} from #{filename}"
+  else
+    puts "Sorry, #{filename} doesn't exist."
+    exit
+  end
+end
+
+try_load_students
 interactive_menu
