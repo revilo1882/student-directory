@@ -1,7 +1,40 @@
+@students = [] # an empty array accessible to all methods
+
+def interactive_menu
+  loop do
+  # 1. print the menu and ask the user what to do
+  print_menu
+  # 2. read the input and save it into a variable
+    selection = gets.chomp
+  # 3. do what the user has asked
+  case selection
+    when "1"
+      @students = input_students
+    when "2"
+      show_students
+    when "9"
+      exit
+    else
+      puts "I don't know what you mean, try again"
+    end
+  end
+end
+
+def print_menu
+  puts "1. Input the students"
+  puts "2. Show the students"
+  puts "9. Exit"
+end
+
+def show_students
+  print_header
+  print
+  print_footer
+end
+
 def input_students
   puts "Please enter the names of the students"
   puts "To finish, just hit return twice after name is requested"
-  students = []
   months = ["january", "february", "march", "april", "may", "june", "july",
     "august", "september", "october", "november", "december"]
   name = gets.strip
@@ -15,15 +48,15 @@ def input_students
         cohort = :april
       end
     end
-    students << {name: name, cohort: cohort, country_of_birth: :england}
-    if students.count < 2
-      puts "Now we have #{students.count} student"
+    @students << {name: name, cohort: cohort, country_of_birth: :england}
+    if @students.count < 2
+      puts "Now we have #{@students.count} student"
     else
-      puts "Now we have #{students.count} students"
+      puts "Now we have #{@students.count} students"
     end
     name = gets.strip
   end
-  students
+  @students
 end
 
 def print_header
@@ -31,9 +64,9 @@ def print_header
   puts "-------------".center(60)
 end
 
-def print(students)
+def print
   months = {}
-  students.each do |student|
+  @students.each do |student|
     name = "#{student[:name].capitalize} "
     cohort = " Students in the #{student[:cohort].to_s.capitalize} cohort:"
     if months[cohort] == nil
@@ -42,15 +75,11 @@ def print(students)
       months[cohort] << name
     end
   end
-months.each { |key| puts key }
+  months.each { |key| puts key }
 end
 
-def print_footer(students)
-  puts "Overall, we have #{students.count} great students".center(60)
+def print_footer
+  puts "Overall, we have #{@students.count} great students".center(60)
 end
 
-students = input_students
-exit if students.empty?
-print_header
-print(students)
-print_footer(students)
+interactive_menu
