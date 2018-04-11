@@ -1,12 +1,9 @@
-def months
-  months = ["january", "february", "march", "april", "may", "june", "july",
-    "august", "september", "october", "november", "december"]
-end
-
-def input_students(months)
+def input_students
   puts "Please enter the names of the students"
   puts "To finish, just hit return twice after name is requested"
   students = []
+  months = ["january", "february", "march", "april", "may", "june", "july",
+    "august", "september", "october", "november", "december"]
   name = gets.strip
   while !name.empty? do
     puts "Which cohort are they on?"
@@ -34,24 +31,26 @@ def print_header
   puts "-------------".center(60)
 end
 
-def print(students, months)
-  months.each do |month|
-    puts "The #{month.capitalize} cohort includes:
-    "
-    students.each do |student|
-      if student[:cohort] == month.to_sym
-        puts "#{student[:name].capitalize}".center(60)
-      end
+def print(students)
+  months = {}
+  students.each do |student|
+    name = "#{student[:name].capitalize} "
+    cohort = " Students in the #{student[:cohort].to_s.capitalize} cohort:"
+    if months[cohort] == nil
+      months[cohort] = name
+    else
+      months[cohort] << name
     end
   end
+months.each { |key| puts key }
 end
 
 def print_footer(students)
   puts "Overall, we have #{students.count} great students".center(60)
 end
 
-students = input_students(months)
+students = input_students
 exit if students.empty?
 print_header
-print(students, months)
+print(students)
 print_footer(students)
