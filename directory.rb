@@ -1,6 +1,5 @@
-@students = [] # an empty array accessible to all methods
-@months = ["january", "february", "march", "april", "may", "june", "july",
-  "august", "september", "october", "november", "december"]
+require 'csv'
+@students = []
 
 def interactive_menu
   loop do
@@ -56,15 +55,7 @@ def input_students
   name = STDIN.gets.strip
   while !name.empty? do
     puts "Which cohort are they on?"
-    cohort = STDIN.gets.strip.downcase.to_sym
-    while !@months.any? { |month| cohort.to_s.include?(month) } do
-      puts "Please input the correct cohort or leave blank to automate"
-      cohort = STDIN.gets.strip.downcase.to_sym
-      if cohort.empty?()
-        cohort = :april
-      end
-    end
-    add_students(name, cohort)
+    cohorts(name)
     if @students.count < 2
       puts "Now we have #{@students.count} student"
     else
@@ -73,6 +64,20 @@ def input_students
     name = STDIN.gets.strip
   end
   @students
+end
+
+def cohorts(name)
+  months = ["january", "february", "march", "april", "may", "june", "july",
+            "august", "september", "october", "november", "december"]
+  cohort = STDIN.gets.strip.downcase.to_sym
+  while !months.any? { |month| cohort.to_s.include?(month) } do
+    puts "Please input the correct cohort or leave blank to automate"
+    cohort = STDIN.gets.strip.downcase.to_sym
+    if cohort.empty?()
+      cohort = :april
+    end
+  end
+  add_students(name, cohort)
 end
 
 def input_cohort
@@ -99,24 +104,26 @@ def print_students_list
 end
 
 def print_footer
-  puts "Overall, we have #{@students.count} great students".center(60)
+  if @students.count == 1
+    puts "Overall, we have #{@students.count} great student".center(60)
+  else
+    puts "Overall, we have #{@students.count} great students".center(60)
+  end
 end
 
 def save_students
   puts "Which file would you like to save to?"
   filename = STDIN.gets.chomp
-  if filename == ""
+  if filename.empty?
     puts "Sorry you did not enter a file name"
   else
-    file = File.open(filename,"w")
-    @students.each do |student|
-      student_data = [student[:name], student[:cohort]]
-      csv_line = student_data.join(",")
-      file.puts csv_line
+    CSV.open(filename,"w") do |csv|
+      @students.each do |student|
+        csv << [student[:name], student[:cohort]]
+      end
     end
     puts "You have saved as #{filename}"
-  file.close
-end
+  end
 end
 
 def load_students
@@ -131,7 +138,7 @@ def try_load_students
 end
 
 def check_filename(filename)
-  if filename.nil?
+  if filename.nil? || filename.empty?
     filename = "students.csv"
     copy_file(filename)
     puts "Loaded #{@students.count} from students.csv"
@@ -145,12 +152,12 @@ def check_filename(filename)
 end
 
 def copy_file(filename)
-  file = File.open(filename,"r")
-  file.readlines.each do |line|
-    name, cohort = line.chomp.split(",")
-    add_students(name, cohort)
+  CSV.open(filename,"r") do |csv|
+    CSV.foreach(filename) do |row|
+      name, cohort = row
+      add_students(name, cohort)
+    end
   end
-  file.close
 end
 
 def add_students(name, cohort)
